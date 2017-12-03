@@ -1,0 +1,122 @@
+{
+    "agency.txt": {
+        "agency_phone": "TEXT",
+        "agency_fare_url": "TEXT",
+        "agency_url": "TEXT NOT NULL",
+        "agency_id": "TEXT",
+        "agency_name": "TEXT NOT NULL",
+        "agency_timezone": "TEXT NOT NULL",
+        "agency_lang": "TEXT",
+        "agency_email": "TEXT"
+    },
+    "trips.txt": {
+        "block_id": "TEXT",
+        "bikes_allowed": "INTEGER",
+        "route_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES routes()",
+        "wheelchair_accessible": "INTEGER",
+        "direction_id": "INTEGER",
+        "trip_headsign": "TEXT",
+        "shape_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES shapes()",
+        "service_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES calendar()",
+        "trip_id": "TEXT PRIMARY KEY",
+        "trip_short_name": "TEXT"
+    }, 
+    "stops.txt": {
+        "stop_lat": "REAL NOT NULL",
+        "stop_timezone": "TEXT",
+        "wheelchair_boarding": "INTEGER",
+        "stop_code": "TEXT",
+        "stop_lon": "REAL NOT NULL",
+        "parent_station": "INTEGER",
+        "stop_url": "TEXT",
+        "stop_id": "TEXT PRIMARY KEY",
+        "stop_desc": "TEXT",
+        "stop_name": "TEXT NOT NULL",
+        "location_type": "INTEGER",
+        "zone_id": "INTEGER"
+    }, 
+    "shapes.txt": {
+        "shape_pt_lat": "REAL NOT NULL",
+        "shape_id": "TEXT NOT NULL",
+        "shape_pt_lon": "REAL NOT NULL",
+        "shape_pt_sequence": "INTEGER NOT NULL",
+        "shape_dist_traveled": "REAL"
+    }, 
+    "fare_rules.txt": {
+        "route_id": "TEXT, FOREIGN KEY() REFERENCES routes()",
+        "fare_id": "TEXT PRIMARY KEY",
+        "contains_id": "TEXT, FOREIGN KEY() REFERENCES stops(zone_id)",
+        "destination_id": "TEXT, FOREIGN KEY() REFERENCES stops(zone_id)",
+        "origin_id": "TEXT, FOREIGN KEY() REFERENCES stops(zone_id)"
+    },
+    "frequencies.txt": {
+        "headway_secs": "INTEGER NOT NULL",
+        "start_time": "TEXT NOT NULL",
+        "trip_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES trips()",
+        "end_time": "TEXT NOT NULL",
+        "exact_times": "INTEGER"
+    }, 
+    "feed_info.txt": {
+        "feed_publisher_name": "TEXT NOT NULL",
+        "feed_start_date": "TEXT",
+        "feed_version": "TEXT",
+        "feed_end_date": "TEXT",
+        "feed_lang": "TEXT NOT NULL",
+        "feed_publisher_url": "TEXT NOT NULL"
+    }, 
+    "fare_attributes.txt": {
+        "payment_method": "INTEGER",
+        "price": "REAL NOT NULL",
+        "agency_id": "TEXT, FOREIGN KEY() REFERENCES agency()",
+        "currency_type": "TEXT NOT NULL",
+        "fare_id": "TEXT PRIMARY KEY",
+        "transfer_duration": "INTEGER",
+        "transfers": "INTEGER NOT NULL"
+    }, 
+    "calendar_dates.txt": {
+        "date": "TEXT NOT NULL, PRIMARY KEY",
+        "service_id": "TEXT NOT NULL, PRIMARY KEY",
+        "exception_type": "INTEGER NOT NULL"
+    }, 
+    "transfers.txt": {
+        "transfer_type": "INTEGER NOT NULL",
+        "min_transfer_time": "INTEGER",
+        "to_stop_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES stops(stop_id)",
+        "from_stop_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES stops(stop_id)"
+    },
+    "calendar.txt": {
+        "end_date": "INTEGER NOT NULL",
+        "monday": "INTEGER NOT NULL",
+        "tuesday": "INTEGER NOT NULL",
+        "friday": "INTEGER NOT NULL",
+        "wednesday": "INTEGER NOT NULL",
+        "thursday": "INTEGER NOT NULL",
+        "start_date": "INTEGER NOT NULL",
+        "sunday": "INTEGER NOT NULL",
+        "service_id": "TEXT PRIMARY KEY",
+        "saturday": "INTEGER NOT NULL"
+    }, 
+    "routes.txt": {
+        "route_long_name": "TEXT NOT NULL",
+        "route_type": "INTEGER",
+        "route_text_color": "TEXT",
+        "route_color": "TEXT",
+        "agency_id": "TEXT",
+        "route_id": "TEXT PRIMARY KEY",
+        "route_url": "TEXT",
+        "route_desc": "TEXT",
+        "route_short_name": "TEXT NOT NULL"
+    }, 
+    "stop_times.txt": {
+        "pickup_type": "INTEGER",
+        "stop_headsign": "TEXT",
+        "shape_dist_traveled": "REAL",
+        "timepoint": "INTEGER",
+        "arrival_time": "TEXT NOT NULL",
+        "stop_sequence": "INTEGER NOT NULL",
+        "stop_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES stops()",
+        "drop_off_type": "INTEGER",
+        "trip_id": "TEXT NOT NULL, FOREIGN KEY() REFERENCES trips()",
+        "departure_time": "TEXT NOT NULL"
+    }
+}
