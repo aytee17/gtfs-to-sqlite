@@ -59,6 +59,7 @@ public class DatabaseBuilder {
         private final QueryCreator mQueryCreator;
         private final List<String[]> mDependencies;
         private final String mCreateStatement;
+        private final List<String> mIndexQueries;
 
         private boolean mBuilt;
 
@@ -70,6 +71,7 @@ public class DatabaseBuilder {
             mQueryCreator = queryCreator;
             mDependencies = mQueryCreator.getTableDependencies();
             mCreateStatement = mQueryCreator.getCreateQuery();
+            mIndexQueries = mQueryCreator.getIndexQueries();
 
             mTableName = queryCreator.getTableName();
             mBuilt = false;
@@ -85,6 +87,7 @@ public class DatabaseBuilder {
 
             createTable();
             populateTable();
+            createIndices();
             mBuilt = true;
         }
 
@@ -111,6 +114,17 @@ public class DatabaseBuilder {
             mFinishTime = System.currentTimeMillis();
             Main.print("Populated: " + mTableName);
             Main.print("Time taken: " + new Long((mFinishTime - mStartTime)/1000).toString() + " seconds");
+        }
+
+        private void createIndices() {
+            for (String query : mIndexQueries) {
+                try {
+                    mConnection.createStatement().execute(query);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                Main.print("Created index with: " + query);
+            }
         }
     }
 }

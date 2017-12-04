@@ -43,6 +43,13 @@ public class QueryCreator {
     private List<String> mCompositeKey;
     private List<String> mForeignKeys;
 
+    public List<String> getIndexQueries() {
+        return mIndexQueries;
+    }
+
+    private List<String> mIndexQueries;
+
+
     private BufferedReader mBufferedReader;
 
     public QueryCreator(JSONObject textFileSpec, File textFile) throws JSONException {
@@ -58,6 +65,7 @@ public class QueryCreator {
 
         mDependencies = new ArrayList<>();
 
+        // Initialize Dependencies and ValidAttributes
         for (int i = 0; i < mFileAttributes.length; i++) {
             String attribute = mFileAttributes[i];
             if (mTextFileSpec.has(attribute)) {
@@ -79,6 +87,8 @@ public class QueryCreator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        mIndexQueries = generateCreateIndexQueries();
     }
 
     private String[] getAttributes() {
@@ -197,7 +207,7 @@ public class QueryCreator {
     /**
      * Queries are executed as soon as they are built to save from storing them in memory for CreationNode.
      * This violates the 'separation of concerns' principle and should be changed, especially if this software
-     * is to be extended to support more databases
+     * is to be extended to support more databases.
      */
     public void executeInsertQueries(Connection connection) {
         try {
