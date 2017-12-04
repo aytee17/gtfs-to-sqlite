@@ -57,7 +57,7 @@ public class DatabaseBuilder {
      */
     private class CreationNode {
         private final QueryCreator mQueryCreator;
-        private final List<String> mDependencies;
+        private final List<String[]> mDependencies;
         private final String mCreateStatement;
 
         private boolean mBuilt;
@@ -78,8 +78,8 @@ public class DatabaseBuilder {
         public void build() {
             if (mBuilt) return;
 
-            for (String table : mDependencies) {
-                CreationNode node = mCreateJobs.get(table);
+            for (String[] entry : mDependencies) {
+                CreationNode node = mCreateJobs.get(entry[1]);
                 node.build();
             }
 

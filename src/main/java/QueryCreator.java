@@ -37,7 +37,7 @@ public class QueryCreator {
 
     private String mCreateQuery;
 
-    private List<String> mDependencies;
+    private List<String[]> mDependencies;
 
     // Holds all attributes in a composite key ff this table has one
     private List<String> mCompositeKey;
@@ -66,7 +66,10 @@ public class QueryCreator {
                 Matcher match = FOREIGN_KEY_PATTERN.matcher(attributeDefinition);
                 if (match.find()) {
                     String table = match.group(1);
-                    mDependencies.add(table);
+                    mDependencies.add(new String[] {
+                            attribute,
+                            table
+                    });
                 }
             }
         }
@@ -155,8 +158,22 @@ public class QueryCreator {
         return createTableQuery.toString();
     }
 
-    private String generateCreateIndex() {
-        return "";
+    private List<String> generateCreateIndexQueries() {
+        List<String> indexQueries = new ArrayList<>();
+
+        String table = getTableName();
+
+        for (String[] entry : mDependencies) {
+            String referenceAttribute = entry[0];
+            String referenceTable = entry[1];
+
+            StringBuilder query = new StringBuilder("CREATE INDEX fk_" +
+                    table + "_" + referenceTable + "_" + referenceAttribute +
+                    " ON " + table + "(" + referenceAttribute + ");");
+            indexQueries.add(query.toString());
+        }
+
+        return indexQueries;
     }
 
     private String processDefinition(String attribute, String definition) {
@@ -236,7 +253,7 @@ public class QueryCreator {
         return mCreateQuery;
     }
 
-    public List<String> getTableDependencies() {
+    public List<String[]> getTableDependencies() {
         return mDependencies;
     }
 
