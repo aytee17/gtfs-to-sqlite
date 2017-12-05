@@ -18,16 +18,16 @@ public class IO {
     public static void writeInputToFile(InputStream inputStream, File outputFile) throws FileNotFoundException {
         BufferedInputStream bufferedInput = new BufferedInputStream(inputStream);
         FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+        BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutputStream);
 
         byte[] buffer = new byte[1024];
         int bytesRead;
         try {
             while ((bytesRead = inputStream.read(buffer)) != -1) {
-                fileOutputStream.write(buffer, 0, bytesRead);
+                bufferedOutput.write(buffer, 0, bytesRead);
             }
             bufferedInput.close();
-            fileOutputStream.flush();
-            fileOutputStream.close();
+            bufferedOutput.close();
         }
         catch (IOException exception) {
             exception.printStackTrace();
