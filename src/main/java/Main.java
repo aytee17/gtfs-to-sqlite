@@ -45,7 +45,7 @@ public class Main {
             if (line.hasOption(URL_FLAG)) {
                 print("got URL arg");
                 String gtfsURL = line.getOptionValue(URL_FLAG);
-                gtfsFile = NetworkUtility.getFileFromURL("./GTFS.zip", gtfsURL);
+                gtfsFile = IO.getFileFromURL("./GTFS.zip", gtfsURL);
             } else {
                 print("got filepath");
                 gtfsPath = line.getOptionValue(GTFS_FLAG);
@@ -75,6 +75,7 @@ public class Main {
         }
     }
 
+    // Global helper method for printing
     public static void print(String message) {
         System.out.println(message);
     }

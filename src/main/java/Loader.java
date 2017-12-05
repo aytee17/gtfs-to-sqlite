@@ -72,11 +72,9 @@ public class Loader {
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
                     InputStream inputStream = zipFile.getInputStream(entry);
-
                     File entryFile = new File(newFolder.getPath(), entry.getName());
-                    FileOutputStream fileOutputStream = new FileOutputStream(entryFile);
 
-                    NetworkUtility.writeInputToOutput(inputStream, fileOutputStream);
+                    IO.writeInputToFile(inputStream, entryFile);
                     Main.print("got " + entryFile.getName());
                     textFiles.add(entryFile);
                 }
