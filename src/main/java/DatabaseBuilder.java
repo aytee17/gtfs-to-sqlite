@@ -80,7 +80,8 @@ public class DatabaseBuilder {
             populateTable();
             createIndices();
             mBuilt = true;
-            Main.print("\n");
+
+            Main.print("==============================");
         }
 
         private void createTable() {

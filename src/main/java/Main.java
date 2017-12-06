@@ -1,81 +1,110 @@
 import org.apache.commons.cli.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.Scanner;
 
 /**
  * @author Andrew Tang
  */
 public class Main {
-    public static final String GTFS_FLAG = "g";
-    public static final String GTFS_DESCRIPTION = "Path to the GTFS data";
 
-    public static final String URL_FLAG = "u";
-    public static final String URL_DESCRIPTION = "URL to the GTFS data";
-
-    public static final String DATABASE_FLAG = "d";
-    public static final String DATABASE_DESCRIPTION = "Path to the database file";
+    public static final String GTFS_OPTION = "p";
+    public static final String URL_OPTION = "u";
+    public static final String DATABASE_OPTION = "d";
+    public static final String CMD_NAME = "gtsql";
+    public static final String FOOTER = "\nThis tool is used to generate an SQLite database from a GTFS feed. " +
+            "\nPlease report issues at https://github.com/aytee17/gtfs-to-sqlite";
 
     public static void main(String[] args) {
-        Connection connection = null;
         try {
             Options options = new Options();
-            options.addOption(GTFS_FLAG, true , GTFS_DESCRIPTION);
-            options.addOption(DATABASE_FLAG, true, DATABASE_DESCRIPTION);
-            options.addOption(URL_FLAG, true, URL_DESCRIPTION);
 
-            CommandLineParser parser = new DefaultParser();
-            CommandLine line = parser.parse(options, args);
+            Option path = Option.builder(GTFS_OPTION)
+                    .longOpt("path")
+                    .hasArg()
+                    .argName("gtfs_path")
+                    .desc("Path to the GTFS data")
+                    .required()
+                    .build();
 
-            if (line.hasOption(GTFS_FLAG) == false && line.hasOption(URL_FLAG) == false) {
-                System.out.println("Need to set URL or file path to gtfs");
-                System.exit(-1);
-            }
-            if (!line.hasOption(DATABASE_FLAG)) {
-                System.exit(-1);
-            }
+            Option url = Option.builder(URL_OPTION)
+                    .longOpt("url")
+                    .hasArg()
+                    .argName("gtfs_url")
+                    .desc("URL to the GTFS data")
+                    .build();
 
-            String gtfsPath;
-            File gtfsFile;
+            Option database = Option.builder(DATABASE_OPTION)
+                    .longOpt("database")
+                    .hasArg()
+                    .argName("database_path")
+                    .desc("Path to the database file")
+                    .required()
+                    .build();
 
-            if (line.hasOption(URL_FLAG)) {
-                String gtfsURL = line.getOptionValue(URL_FLAG);
-                print("Downloading feed from: " + gtfsURL);
-                gtfsFile = IO.getFileFromURL("./GTFS.zip", gtfsURL);
-                print("Feed downloaded.");
-            } else {
-                gtfsPath = line.getOptionValue(GTFS_FLAG);
-                gtfsFile = new File(gtfsPath);
-            }
 
-            String databasePath = line.getOptionValue(DATABASE_FLAG);
-            connection = DriverManager.getConnection("jdbc:sqlite:" + databasePath);
-            connection.setAutoCommit(false);
+            options.addOption(path)
+                    .addOption(url)
+                    .addOption(database);
 
-            new Loader(gtfsFile, connection);
-
-        } catch (ParseException parseException) {
-            parseException.printStackTrace();
-       } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
             try {
+                CommandLine line = new DefaultParser().parse(options, args);
+
+                Path databasePath = Paths.get(line.getOptionValue(DATABASE_OPTION));
+                if ( Files.exists(databasePath) ) {
+                    print("A file at " + databasePath.toString() + " already exists.");
+                    System.out.print("Would you like to replace it? (yes/no) ");
+                    Scanner reader = new Scanner(System.in);
+                    String response  = reader.nextLine();
+                    if (response.equals("yes")) {
+                        print("Deleting file...");
+                        Files.delete(databasePath);
+                        print("File deleted.");
+                    } else if (response.equals("no")) {
+                        System.exit(0);
+                    } else {
+                        throw new Exception("Unrecognised response.");
+                    }
+                    reader.close();
+                }
+
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:" + databasePath.toAbsolutePath());
+                connection.setAutoCommit(false);
+
+                File gtfsFile;
+                String gtfsPath = Paths
+                        .get(line.getOptionValue(GTFS_OPTION))
+                        .toAbsolutePath()
+                        .toString();
+
+                if (line.hasOption(URL_OPTION)) {
+                    String gtfsURL = line.getOptionValue(URL_OPTION);
+                    print("Downloading GTFS feed from: " + gtfsURL);
+                    gtfsFile = IO.getFileFromURL(gtfsPath   + System.getProperty("file.separator") + "GTFS.zip", gtfsURL);
+                    print("Feed downloaded.");
+                } else {
+                    gtfsFile = new File(gtfsPath);
+                }
+
+                new Loader(gtfsFile, connection);
                 connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+                print("Database created.");
+
+            } catch (ParseException exception) {
+                print(exception.getMessage() + "\n");
+                new HelpFormatter().printHelp(CMD_NAME, "", options, FOOTER, true);
             }
+        }  catch (Exception e) {
+            print(e.getMessage());
+            print(FOOTER);
         }
     }
 
-    // Global helper method for printing
     public static void print(String message) {
         System.out.println(message);
     }
