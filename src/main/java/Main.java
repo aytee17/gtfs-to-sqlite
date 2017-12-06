@@ -12,7 +12,7 @@ import java.sql.SQLException;
  */
 public class Main {
     public static final String GTFS_FLAG = "g";
-    public static final String GTFS_DESCRIPTION = "File path to the GTFS data";
+    public static final String GTFS_DESCRIPTION = "Path to the GTFS data";
 
     public static final String URL_FLAG = "u";
     public static final String URL_DESCRIPTION = "URL to the GTFS data";
@@ -32,7 +32,7 @@ public class Main {
             CommandLine line = parser.parse(options, args);
 
             if (line.hasOption(GTFS_FLAG) == false && line.hasOption(URL_FLAG) == false) {
-                System.out.println("Need to set URL or file path of gtfs");
+                System.out.println("Need to set URL or file path to gtfs");
                 System.exit(-1);
             }
             if (!line.hasOption(DATABASE_FLAG)) {
@@ -43,11 +43,11 @@ public class Main {
             File gtfsFile;
 
             if (line.hasOption(URL_FLAG)) {
-                print("got URL arg");
                 String gtfsURL = line.getOptionValue(URL_FLAG);
+                print("Downloading feed from: " + gtfsURL);
                 gtfsFile = IO.getFileFromURL("./GTFS.zip", gtfsURL);
+                print("Feed downloaded.");
             } else {
-                print("got filepath");
                 gtfsPath = line.getOptionValue(GTFS_FLAG);
                 gtfsFile = new File(gtfsPath);
             }

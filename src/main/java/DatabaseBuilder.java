@@ -46,15 +46,6 @@ public class DatabaseBuilder {
         }
     }
 
-    /**
-     * - tables need to be generated in an order that satisfies foreign key constraints
-     * - this means tables that have valeus that reference a column in another table cannot be created until
-     *   those dependencies are met.
-     * - calling create table on a creation node will check the tables dependencies, retrieve the node from the mBuildJobs
-     *   and recursively call create table on that node.
-     * Creation Node is a wrapper class for QueryCreator. Where QueryCreator is responsible for
-     * Generating the relavent queries for population
-     */
     private class CreationNode {
         private final QueryCreator mQueryCreator;
         private final List<String[]> mDependencies;
@@ -89,42 +80,48 @@ public class DatabaseBuilder {
             populateTable();
             createIndices();
             mBuilt = true;
+            Main.print("\n");
         }
 
         private void createTable() {
-            mStartTime = System.currentTimeMillis();
-
+            Main.print("Creating " + mTableName);
             try {
                 mConnection.createStatement().execute(mCreateStatement);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            mFinishTime = System.currentTimeMillis();
-            Main.print("Created: " + mTableName);
-            Main.print("Time taken: " + new Long((mFinishTime - mStartTime)/1000).toString() + " seconds");
         }
 
         private void populateTable() {
-            Main.print("Populating " + mTableName);
+            Main.print("Populating...");
             mStartTime = System.currentTimeMillis();
 
             mQueryCreator.executeInsertQueries(mConnection);
 
             mFinishTime = System.currentTimeMillis();
-            Main.print("Populated: " + mTableName);
-            Main.print("Time taken: " + new Long((mFinishTime - mStartTime)/1000).toString() + " seconds");
+            printTimeTaken();
         }
 
         private void createIndices() {
+            if (mIndexQueries.isEmpty()) {
+                return;
+            }
+            Main.print("Creating indices...");
+            mStartTime = System.currentTimeMillis();
+
             for (String query : mIndexQueries) {
                 try {
                     mConnection.createStatement().execute(query);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                Main.print("Created index with: " + query);
             }
+            mFinishTime = System.currentTimeMillis();
+            printTimeTaken();
+        }
+
+        private void printTimeTaken() {
+            Main.print("Done. Time taken: " + new Long((mFinishTime - mStartTime)/1000).toString() + " seconds");
         }
     }
 }

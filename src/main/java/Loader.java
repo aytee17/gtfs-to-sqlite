@@ -18,19 +18,19 @@ public class Loader {
     private JSONObject mSpecification;
 
     public Loader (File gtfsPath, Connection connection) {
-        mTextFiles = getFiles(gtfsPath);
         mSpecification = getSpecification();
+        mTextFiles = getFiles(gtfsPath);
         DatabaseBuilder builder = new DatabaseBuilder(mSpecification, connection);
         for (File texFile : mTextFiles) {
             builder.addTable(texFile);
         }
 
         builder.buildDatabase();
-        Main.print("Done.");
     }
 
     private JSONObject getSpecification() {
         try {
+            Main.print("Reading specification.");
             InputStream jsonStream = this.getClass().getResource("GTFS_Specification.json").openStream();
             BufferedReader jsonReader = new BufferedReader(new InputStreamReader(jsonStream));
             StringBuilder jsonStringBuilder = new StringBuilder();
@@ -42,7 +42,7 @@ public class Loader {
             jsonReader.close();
 
             String jsonString = jsonStringBuilder.toString();
-            Main.print("spec loaded");
+            Main.print("Specification loaded.");
             return new JSONObject(jsonString);
         }
         catch (IOException ioe) {
@@ -60,6 +60,7 @@ public class Loader {
             File[] files = gtfsPath.listFiles();
             for (int i = 0; i < files.length; i++) {
                 textFiles.add(files[i]);
+                Main.print("Loaded " + files[i].getName());
             }
         } else {
             try {
@@ -75,14 +76,15 @@ public class Loader {
                     File entryFile = new File(newFolder.getPath(), entry.getName());
 
                     IO.writeInputToFile(inputStream, entryFile);
-                    Main.print("got " + entryFile.getName());
                     textFiles.add(entryFile);
+                    Main.print("Loaded " + entryFile.getName());
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        Main.print("\n");
         return textFiles;
     }
 }

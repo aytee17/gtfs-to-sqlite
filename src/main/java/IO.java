@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * @author Andrew Tang
@@ -9,7 +10,11 @@ public class IO {
 
     public static File getFileFromURL(String filePath, String urlPath) throws IOException {
         URL url = new URL(urlPath);
-        InputStream inputStream = url.openStream();
+        URLConnection connection = url.openConnection();
+        int size = connection.getContentLength();
+
+        Main.print("File size: " + size/1000000 + "MB");
+        InputStream inputStream = connection.getInputStream();
         File file = new File(filePath);
         writeInputToFile(inputStream, file);
         return file;
