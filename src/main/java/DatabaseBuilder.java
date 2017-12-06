@@ -79,6 +79,11 @@ public class DatabaseBuilder {
             createTable();
             populateTable();
             createIndices();
+            try {
+                mConnection.commit();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             mBuilt = true;
 
             Main.print("==============================");

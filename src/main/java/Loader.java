@@ -66,14 +66,14 @@ public class Loader {
             try {
                 ZipFile zipFile = new ZipFile(gtfsPath);
 
-                File newFolder = new File("./GTFS");
-                newFolder.mkdir();
+                File gtfsFolder = new File(gtfsPath.getParent() + System.getProperty("file.separator") + "GTFS");
+                gtfsFolder.mkdir();
 
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
                     InputStream inputStream = zipFile.getInputStream(entry);
-                    File entryFile = new File(newFolder.getPath(), entry.getName());
+                    File entryFile = new File(gtfsFolder.getPath(), entry.getName());
 
                     IO.writeInputToFile(inputStream, entryFile);
                     textFiles.add(entryFile);

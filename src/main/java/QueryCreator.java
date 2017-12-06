@@ -245,7 +245,6 @@ public class QueryCreator {
                 insertStatement.executeUpdate(query);
             }
 
-            connection.commit();
             insertStatement.close();
 
         } catch (IOException e) {

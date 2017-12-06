@@ -47,7 +47,6 @@ public class Main {
                     .required()
                     .build();
 
-
             options.addOption(path)
                     .addOption(url)
                     .addOption(database);
