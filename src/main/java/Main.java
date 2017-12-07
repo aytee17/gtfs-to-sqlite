@@ -99,6 +99,7 @@ public class Main {
                 new HelpFormatter().printHelp(CMD_NAME, "", options, FOOTER, true);
             }
         }  catch (Exception e) {
+            e.printStackTrace();
             print(e.getMessage());
             print(FOOTER);
         }

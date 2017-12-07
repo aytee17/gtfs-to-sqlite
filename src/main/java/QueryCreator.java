@@ -82,6 +82,7 @@ public class QueryCreator {
             }
         }
 
+
         try {
             mCreateQuery = generateCreateTableQuery();
         } catch (IOException e) {
@@ -210,11 +211,24 @@ public class QueryCreator {
      * is to be extended to support more databases.
      */
     public void executeInsertQueries(Connection connection) {
+        String query = "";
+        int largestIndex = mValidAttributes.get(mValidAttributes.size() - 1);
         try {
             CSVParser parser = new CSVParser(mBufferedReader, CSVFormat.EXCEL);
             Statement insertStatement = connection.createStatement();
 
             for (CSVRecord record : parser) {
+
+                if (record.size() - 1 < largestIndex) {
+                    String warning = "Warning: Row number <"
+                            + record.getRecordNumber()
+                            + "> in <" + getTableName()
+                            + ".txt> only has " + (record.size() - 1) + " attributes. Expected "
+                            + mValidAttributes.size() + " valid attributes at indices "
+                            + mValidAttributes.toString() + " Skipping row.";
+                    Main.print(warning);
+                    continue;
+                }
 
                 StringBuilder queryBuild = new StringBuilder("INSERT INTO " + getTableName());
                 StringBuilder columns = new StringBuilder(" ( ");
@@ -241,7 +255,7 @@ public class QueryCreator {
                     }
                 }
                 queryBuild.append(columns).append(values);
-                String query = queryBuild.toString();
+                query = queryBuild.toString();
                 insertStatement.executeUpdate(query);
             }
 
@@ -250,7 +264,9 @@ public class QueryCreator {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Main.print(e.getMessage());
+            Main.print(query);
+            System.exit(-1);
         }
     }
 
