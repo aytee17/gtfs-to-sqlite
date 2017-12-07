@@ -33,7 +33,7 @@ public class DatabaseBuilder {
             mCreateJobs.put(queryCreator.getTableName(), creationNode);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Main.print(e.getMessage());
         }
     }
 
