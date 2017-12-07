@@ -22,7 +22,11 @@ public class Loader {
         mTextFiles = getFiles(gtfsPath);
         DatabaseBuilder builder = new DatabaseBuilder(mSpecification, connection);
         for (File texFile : mTextFiles) {
-            builder.addTable(texFile);
+            String fileName = texFile.getName();
+            if (mSpecification.has(fileName)) {
+                builder.addTable(texFile);
+                Main.print("Found " + fileName);
+            }
         }
 
         builder.buildDatabase();
@@ -60,7 +64,6 @@ public class Loader {
             File[] files = gtfsPath.listFiles();
             for (int i = 0; i < files.length; i++) {
                 textFiles.add(files[i]);
-                Main.print("Loaded " + files[i].getName());
             }
         } else {
             try {
@@ -77,7 +80,6 @@ public class Loader {
 
                     IO.writeInputToFile(inputStream, entryFile);
                     textFiles.add(entryFile);
-                    Main.print("Loaded " + entryFile.getName());
                 }
 
             } catch (IOException e) {

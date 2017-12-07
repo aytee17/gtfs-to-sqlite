@@ -28,7 +28,6 @@ public class DatabaseBuilder {
         try {
             final JSONObject textFileSpec = mSpecification.getJSONObject(textFile.getName());
             final QueryCreator queryCreator = new QueryCreator(textFileSpec, textFile);
-
             final CreationNode creationNode = new CreationNode(queryCreator);
             mCreateJobs.put(queryCreator.getTableName(), creationNode);
 
