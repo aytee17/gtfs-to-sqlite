@@ -3,13 +3,13 @@ A tool for generating an [SQLite](https://www.sqlite.org/about.html) database fr
 
 ## Features
 * **Fast**:
-Creates ~50000 rows/second with stop_times.txt
+Creates ~50000 rows/second
 
 * **Safe**:
 Checks the feed contains all required files and attributes according to the specification
 
 * **Up to date**:
-Changes to the [GTFS specification](http://gtfs.org/reference/) does not require an update to the tool. Read the wiki for full details.
+Changes to the [GTFS specification](http://gtfs.org/reference/) does not require an update to the tool.
 
 * **Agnostic**:
 Information will not be added, modified or removed when generating the database. 
