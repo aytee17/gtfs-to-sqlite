@@ -3,7 +3,7 @@ A tool for generating an [SQLite](https://www.sqlite.org/about.html) database fr
 
 ## Features
 * **Fast**:
-Creates ~50000 rows/second
+Creates ~100,000 rows/second on an Apple SSD 0128F
 
 * **Safe**:
 Checks the feed contains all required files and attributes according to the specification
