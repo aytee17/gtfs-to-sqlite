@@ -29,7 +29,7 @@ brew install gtsql
 
 ```
 usage: gtsql -p <gtfs_path> [-u <gtfs_url>] -d <database_path>
- -p,--path <gtfs_path>           Path to the GTFS data
+ -p,--path <gtfs_path>           Path to the GTFS data (.zip or directory)
  -u,--url <gtfs_url>             URL to the GTFS data
  -d,--database <database_path>   Path to the database file
  ```
