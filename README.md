@@ -9,7 +9,7 @@ Creates ~100,000 rows/second on an Apple SSD 0128F
 Information will not be added, modified or removed when generating the database.
 
 ## Requirements
-[JRE 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+[Java Runtime Environment 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) or higher.
 
 ## Installation
 ### macOS
