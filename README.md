@@ -18,6 +18,7 @@ Information will not be added, modified or removed when generating the database.
 ### macOS
 Using [Homebrew](https://brew.sh/):
 ```Command Language
+brew tap aytee17/homebrew-tap
 brew install gtsql
 ```
 
