@@ -44,7 +44,7 @@
     }, 
     "fare_rules.txt": {
         "route_id": "TEXT, FOREIGN KEY() REFERENCES routes()",
-        "fare_id": "TEXT PRIMARY KEY",
+        "fare_id": "TEXT, FOREIGN KEY() REFERENCES fare_attributes()",
         "contains_id": "TEXT, FOREIGN KEY() REFERENCES stops(zone_id)",
         "destination_id": "TEXT, FOREIGN KEY() REFERENCES stops(zone_id)",
         "origin_id": "TEXT, FOREIGN KEY() REFERENCES stops(zone_id)"

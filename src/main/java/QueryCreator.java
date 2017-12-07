@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
  */
 
 public class QueryCreator {
-    private static final Pattern FOREIGN_KEY_PATTERN = Pattern.compile(".+, FOREIGN KEY\\(\\) REFERENCES ([a-z]+)\\(?.+\\)");
+    private static final Pattern FOREIGN_KEY_PATTERN = Pattern.compile(".+, FOREIGN KEY\\(\\) REFERENCES ([a-z_]+)\\(?.+\\)");
+    private final Integer mLargestValidIndex;
     private JSONObject mTextFileSpec;
     // The text file containing the table and it's values
     private File mTextFile;
@@ -83,6 +84,9 @@ public class QueryCreator {
         }
 
 
+
+        mLargestValidIndex = mValidAttributes.get(mValidAttributes.size() - 1);
+
         try {
             mCreateQuery = generateCreateTableQuery();
         } catch (IOException e) {
@@ -130,13 +134,12 @@ public class QueryCreator {
 
                 createTableQuery.append("\t" + attribute + " " + attributeDefinition);
 
-                endOfAttributes = (i + 1) >= mValidAttributes.size();
+                endOfAttributes = i >= mLargestValidIndex;
 
                 // If there are more attributes add a comma and new line
                 if (!endOfAttributes) {
                     createTableQuery.append(",\n");
                 } else {
-
                     //add a primary key statement for composite keys at the end if there are any
                     if (!mCompositeKey.isEmpty()) {
 
@@ -212,14 +215,14 @@ public class QueryCreator {
      */
     public void executeInsertQueries(Connection connection) {
         String query = "";
-        int largestIndex = mValidAttributes.get(mValidAttributes.size() - 1);
+        
         try {
             CSVParser parser = new CSVParser(mBufferedReader, CSVFormat.EXCEL);
             Statement insertStatement = connection.createStatement();
 
             for (CSVRecord record : parser) {
 
-                if (record.size() - 1 < largestIndex) {
+                if (record.size() - 1 < mLargestValidIndex) {
                     String warning = "Warning: Row number <"
                             + record.getRecordNumber()
                             + "> in <" + getTableName()
@@ -243,7 +246,7 @@ public class QueryCreator {
                     String value = record.get(validIndex);
                     values.append("\"" + value + "\"");
 
-                    boolean endOfAttributes = (i + 1) >= mValidAttributes.size();
+                    boolean endOfAttributes = i + 1 >= mValidAttributes.size();
 
                     if (!endOfAttributes) {
                         String seperator = ", ";
@@ -254,6 +257,7 @@ public class QueryCreator {
                         values.append(");");
                     }
                 }
+
                 queryBuild.append(columns).append(values);
                 query = queryBuild.toString();
                 insertStatement.executeUpdate(query);

@@ -21,11 +21,14 @@ public class Loader {
         mSpecification = getSpecification();
         mTextFiles = getFiles(gtfsPath);
         DatabaseBuilder builder = new DatabaseBuilder(mSpecification, connection);
+
         for (File texFile : mTextFiles) {
             String fileName = texFile.getName();
             if (mSpecification.has(fileName)) {
                 builder.addTable(texFile);
                 Main.print("Found " + fileName);
+            } else {
+                Main.print("Skipping file not in specification " + fileName);
             }
         }
 
