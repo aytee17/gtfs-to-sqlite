@@ -104,6 +104,8 @@ public class QueryCreator {
 
             // Read the first line of the text file containing the column names of the table
             String firstLine = bufferedReader.readLine();
+            // Replace char inserted by Windows NotePad
+            firstLine = firstLine.replace("\uFEFF", "");
             String[] fileAttributes = firstLine.split(",");
 
             //bufferedReader.close();
@@ -169,7 +171,8 @@ public class QueryCreator {
             }
         }
         createTableQuery.append("\n);");
-        return createTableQuery.toString();
+        String query = createTableQuery.toString();
+        return query;
     }
 
     private List<String> generateCreateIndexQueries() {

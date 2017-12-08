@@ -31,7 +31,6 @@ public class Loader {
                 Main.print("Skipping file not in specification " + fileName);
             }
         }
-
         builder.buildDatabase();
     }
 
