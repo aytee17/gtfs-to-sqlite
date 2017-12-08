@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
  */
 
 public class QueryCreator {
-    private static final Pattern FOREIGN_KEY_PATTERN = Pattern.compile(".+, FOREIGN KEY\\(\\) REFERENCES ([a-z]+)\\(?.+\\)");
+    private static final Pattern FOREIGN_KEY_PATTERN = Pattern.compile(".+, FOREIGN KEY\\(\\) REFERENCES ([a-z_]+)\\(?.+\\)");
+    private final Integer mLargestValidIndex;
     private JSONObject mTextFileSpec;
     // The text file containing the table and it's values
     private File mTextFile;
@@ -82,6 +83,10 @@ public class QueryCreator {
             }
         }
 
+
+
+        mLargestValidIndex = mValidAttributes.get(mValidAttributes.size() - 1);
+
         try {
             mCreateQuery = generateCreateTableQuery();
         } catch (IOException e) {
@@ -99,6 +104,8 @@ public class QueryCreator {
 
             // Read the first line of the text file containing the column names of the table
             String firstLine = bufferedReader.readLine();
+            // Replace char inserted by Windows NotePad
+            firstLine = firstLine.replace("\uFEFF", "");
             String[] fileAttributes = firstLine.split(",");
 
             //bufferedReader.close();
@@ -129,13 +136,12 @@ public class QueryCreator {
 
                 createTableQuery.append("\t" + attribute + " " + attributeDefinition);
 
-                endOfAttributes = (i + 1) >= mValidAttributes.size();
+                endOfAttributes = i >= mLargestValidIndex;
 
                 // If there are more attributes add a comma and new line
                 if (!endOfAttributes) {
                     createTableQuery.append(",\n");
                 } else {
-
                     //add a primary key statement for composite keys at the end if there are any
                     if (!mCompositeKey.isEmpty()) {
 
@@ -165,7 +171,8 @@ public class QueryCreator {
             }
         }
         createTableQuery.append("\n);");
-        return createTableQuery.toString();
+        String query = createTableQuery.toString();
+        return query;
     }
 
     private List<String> generateCreateIndexQueries() {
@@ -210,11 +217,24 @@ public class QueryCreator {
      * is to be extended to support more databases.
      */
     public void executeInsertQueries(Connection connection) {
+        String query = "";
+        
         try {
             CSVParser parser = new CSVParser(mBufferedReader, CSVFormat.EXCEL);
             Statement insertStatement = connection.createStatement();
 
             for (CSVRecord record : parser) {
+
+                if (record.size() - 1 < mLargestValidIndex) {
+                    String warning = "Warning: Row number <"
+                            + record.getRecordNumber()
+                            + "> in <" + getTableName()
+                            + ".txt> only has " + (record.size() - 1) + " attributes. Expected "
+                            + mValidAttributes.size() + " valid attributes at indices "
+                            + mValidAttributes.toString() + " Skipping row.";
+                    Main.print(warning);
+                    continue;
+                }
 
                 StringBuilder queryBuild = new StringBuilder("INSERT INTO " + getTableName());
                 StringBuilder columns = new StringBuilder(" ( ");
@@ -229,7 +249,7 @@ public class QueryCreator {
                     String value = record.get(validIndex);
                     values.append("\"" + value + "\"");
 
-                    boolean endOfAttributes = (i + 1) >= mValidAttributes.size();
+                    boolean endOfAttributes = i + 1 >= mValidAttributes.size();
 
                     if (!endOfAttributes) {
                         String seperator = ", ";
@@ -240,8 +260,9 @@ public class QueryCreator {
                         values.append(");");
                     }
                 }
+
                 queryBuild.append(columns).append(values);
-                String query = queryBuild.toString();
+                query = queryBuild.toString();
                 insertStatement.executeUpdate(query);
             }
 
@@ -250,7 +271,9 @@ public class QueryCreator {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Main.print(e.getMessage());
+            Main.print(query);
+            System.exit(-1);
         }
     }
 

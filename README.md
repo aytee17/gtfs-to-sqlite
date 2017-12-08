@@ -5,17 +5,11 @@ A tool for generating an [SQLite](https://www.sqlite.org/about.html) database fr
 * **Fast**:
 Creates ~100,000 rows/second on an Apple SSD 0128F
 
-* **Safe**:
-Checks the feed contains all required files and attributes according to the specification
-
-* **Up to date**:
-Changes to the [GTFS specification](http://gtfs.org/reference/) does not require an update to the tool.
-
 * **Agnostic**:
 Information will not be added, modified or removed when generating the database.
 
 ## Requirements
-[JRE 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+[Java Runtime Environment 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) or higher.
 
 ## Installation
 ### macOS
@@ -29,7 +23,7 @@ brew install gtsql
 
 ```
 usage: gtsql -p <gtfs_path> [-u <gtfs_url>] -d <database_path>
- -p,--path <gtfs_path>           Path to the GTFS data
+ -p,--path <gtfs_path>           Path to the GTFS data (.zip or directory)
  -u,--url <gtfs_url>             URL to the GTFS data
  -d,--database <database_path>   Path to the database file
  ```

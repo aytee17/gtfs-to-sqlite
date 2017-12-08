@@ -56,20 +56,20 @@ public class Main {
 
                 Path databasePath = Paths.get(line.getOptionValue(DATABASE_OPTION));
                 if ( Files.exists(databasePath) ) {
-                    print("A file at " + databasePath.toString() + " already exists.");
+                   /* print("A file at " + databasePath.toString() + " already exists.");
                     System.out.print("Would you like to replace it? (yes/no) ");
                     Scanner reader = new Scanner(System.in);
                     String response  = reader.nextLine();
-                    if (response.equals("yes")) {
+                    if (response.equals("yes")) {*/
                         print("Deleting file...");
                         Files.delete(databasePath);
                         print("File deleted.");
-                    } else if (response.equals("no")) {
-                        System.exit(0);
-                    } else {
-                        throw new Exception("Unrecognised response.");
-                    }
-                    reader.close();
+//                    } else if (response.equals("no")) {
+//                        System.exit(0);
+//                    } else {
+//                        throw new Exception("Unrecognised response.");
+//                    }
+//                    reader.close();
                 }
 
                 Connection connection = DriverManager.getConnection("jdbc:sqlite:" + databasePath.toAbsolutePath());
@@ -99,6 +99,7 @@ public class Main {
                 new HelpFormatter().printHelp(CMD_NAME, "", options, FOOTER, true);
             }
         }  catch (Exception e) {
+            e.printStackTrace();
             print(e.getMessage());
             print(FOOTER);
         }
