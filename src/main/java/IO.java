@@ -1,7 +1,6 @@
-
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author Andrew Tang
@@ -10,12 +9,27 @@ public class IO {
 
     public static File getFileFromURL(String filePath, String urlPath) throws IOException {
         URL url = new URL(urlPath);
-        URLConnection connection = url.openConnection();
-        int size = connection.getContentLength();
+        HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();;
 
-        Main.print("File size: " + size/1000000 + "MB");
-        InputStream inputStream = connection.getInputStream();
         File file = new File(filePath);
+        int responseCode = httpConnection.getResponseCode();
+
+        // HTTP redirect
+        if (responseCode % 300 < 100) {
+            String redirect = httpConnection.getHeaderField("Location");
+            Main.print("Redirecting to " + redirect);
+            return getFileFromURL(filePath, redirect);
+        }
+        // Everything else
+        else if (responseCode != 200) {
+            Main.print("HTTP " + responseCode + ": " + httpConnection.getResponseMessage());
+            System.exit(-1);
+        }
+
+        double size = (double) httpConnection.getContentLength();
+        Main.print("File size: " + size/1000 + "KB");
+
+        InputStream inputStream = httpConnection.getInputStream();
         writeInputToFile(inputStream, file);
         return file;
     }

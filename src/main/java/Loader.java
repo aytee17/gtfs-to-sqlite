@@ -26,7 +26,7 @@ public class Loader {
             String fileName = texFile.getName();
             if (mSpecification.has(fileName)) {
                 builder.addTable(texFile);
-                Main.print("Found " + fileName);
+                Main.print("Loaded " + fileName);
             } else {
                 Main.print("Skipping file not in specification " + fileName);
             }
