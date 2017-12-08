@@ -28,7 +28,7 @@ public class Main {
                     .longOpt("path")
                     .hasArg()
                     .argName("gtfs_path")
-                    .desc("Path to the GTFS data")
+                    .desc("Path to the GTFS data (.zip or directory)")
                     .required()
                     .build();
 
