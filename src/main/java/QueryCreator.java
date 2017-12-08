@@ -82,9 +82,6 @@ public class QueryCreator {
                 }
             }
         }
-
-
-
         mLargestValidIndex = mValidAttributes.get(mValidAttributes.size() - 1);
 
         try {
