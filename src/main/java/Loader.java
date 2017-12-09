@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -14,8 +16,10 @@ import java.util.zip.ZipFile;
  */
 public class Loader {
 
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile("([^/]+.txt)");
     private List<File> mTextFiles;
     private JSONObject mSpecification;
+
 
     public Loader (File gtfsPath, Connection connection) {
         mSpecification = getSpecification();
@@ -78,10 +82,17 @@ public class Loader {
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
                     InputStream inputStream = zipFile.getInputStream(entry);
-                    File entryFile = new File(gtfsFolder.getPath(), entry.getName());
 
-                    IO.writeInputToFile(inputStream, entryFile);
-                    textFiles.add(entryFile);
+                    Matcher match = FILE_NAME_PATTERN.matcher(entry.getName());
+
+                    if (match.find()) {
+                        String fileName = match.group(1);
+
+                        File entryFile = new File(gtfsFolder.getPath(), fileName);
+
+                        IO.writeInputToFile(inputStream, entryFile);
+                        textFiles.add(entryFile);
+                    }
                 }
 
             } catch (IOException e) {

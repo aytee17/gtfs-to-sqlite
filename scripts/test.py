@@ -15,7 +15,7 @@ def main():
 
     jobs = []
     for feed in feeds:
-        if 'd' in feed['u']:
+        if 't' in feed and 'u' in feed and 'd' in feed['u']:
             job = {'title': feed['t'],'url': feed['u']['d']}
             jobs.append(job)
 
@@ -25,7 +25,6 @@ def main():
         print(title)
         print(url)
         os.system('mkdir ' + title)
-
         os.system("gtsql -p " + title + " -d " + title + "/test.db -u " + url)
         print("\n\n")
 

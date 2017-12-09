@@ -73,8 +73,10 @@ public class QueryCreator {
                 mValidAttributes.add(new Integer(i));
                 String attributeDefinition = mTextFileSpec.getString(attribute);
                 Matcher match = FOREIGN_KEY_PATTERN.matcher(attributeDefinition);
+
                 if (match.find()) {
                     String table = match.group(1);
+
                     mDependencies.add(new String[] {
                             attribute,
                             table
