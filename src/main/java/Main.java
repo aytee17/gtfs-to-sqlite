@@ -84,8 +84,11 @@ public class Main {
                 if (line.hasOption(URL_OPTION)) {
                     String gtfsURL = line.getOptionValue(URL_OPTION);
                     print("Downloading GTFS feed from: " + gtfsURL);
-                    gtfsFile = IO.getFileFromURL(gtfsPath   + System.getProperty("file.separator") + "GTFS.zip", gtfsURL);
-                    print("Feed downloaded.");
+                    gtfsFile = IO.getFileFromURL(
+                            gtfsPath   + System.getProperty("file.separator") + "GTFS.zip",
+                            gtfsURL,
+                            true);
+                    print("\nFeed downloaded.");
                 } else {
                     gtfsFile = new File(gtfsPath);
                 }
