@@ -97,17 +97,27 @@ public class QueryCreator {
 
     private String[] getAttributes() {
         try {
-            //Read GTFS data text file
+            // Open the GTFS data text file for reading
             FileReader fileReader = new FileReader(mTextFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             // Read the first line of the text file containing the column names of the table
             String firstLine = bufferedReader.readLine();
-            // Replace char inserted by Windows NotePad
+
+            // Replace character inserted by Windows NotePad
             firstLine = firstLine.replace("\uFEFF", "");
+
+            // Get the table attributes
             String[] fileAttributes = firstLine.split(",");
 
-            //bufferedReader.close();
+            // Sanitize the attributes
+            for (int i = 0; i < fileAttributes.length; i++) {
+                fileAttributes[i] = fileAttributes[i]
+                        .toLowerCase()
+                        .replaceAll("[^a-z_]", "");
+            }
+
+            // Keep a reference to the reader to read the rest of the data later
             mBufferedReader = bufferedReader;
 
             return fileAttributes;

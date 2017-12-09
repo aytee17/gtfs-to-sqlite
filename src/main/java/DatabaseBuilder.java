@@ -54,8 +54,8 @@ public class DatabaseBuilder {
         private boolean mBuilt;
 
         private final String mTableName;
-        private long mStartTime;
-        private long mFinishTime;
+        private double mStartTime;
+        private double mFinishTime;
 
         public CreationNode(QueryCreator queryCreator) {
             mQueryCreator = queryCreator;
@@ -126,7 +126,13 @@ public class DatabaseBuilder {
         }
 
         private void printTimeTaken() {
-            Main.print("Done. Time taken: " + new Long((mFinishTime - mStartTime)/1000).toString() + " seconds");
+            double  timeInS = (mFinishTime - mStartTime)/1000;
+            double  timeInMs = (mFinishTime - mStartTime);
+
+            double time = timeInS > 1 ? timeInS : timeInMs;
+            String unit = timeInS > 1 ? " seconds" : "ms";
+
+            Main.print("Done. Time taken: " + time + unit);
         }
     }
 }

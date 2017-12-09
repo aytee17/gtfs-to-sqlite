@@ -26,8 +26,14 @@ public class IO {
             System.exit(-1);
         }
 
-        double size = (double) httpConnection.getContentLength();
-        Main.print("File size: " + size/1000 + "KB");
+        int contentLength = httpConnection.getContentLength();
+        double sizeInMb = (contentLength / ((double)(1024*1024)));
+        double sizeInKb = (contentLength / 1024);
+
+        double size = sizeInMb > 1 ? sizeInMb : sizeInKb;
+        String unit = sizeInMb > 1 ? "MB" : "KB";
+
+        Main.print("File size: " + size + unit);
 
         InputStream inputStream = httpConnection.getInputStream();
         writeInputToFile(inputStream, file);
