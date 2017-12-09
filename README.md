@@ -29,5 +29,6 @@ usage: gtsql -p <gtfs_path> [-u <gtfs_url>] -d <database_path>
  ```
 
 ## Notes
+* Before attempting to generate the database consider validating your feed through [Google's transit feed validator](https://github.com/google/transitfeed) and correcting any errors.
 * If your GTFS static feed contains custom fields not defined in the [GTFS specification](http://gtfs.org/reference/) they will be ignored when the files are parsed. To include them in the database, add the custom field to ```resources/GTFS_Specification.json``` following the conventions of the other fields.
 * If the feed you are working with uses ```calendar_dates.txt``` instead of ```calendar.txt```, update ```resources/GTFS_Specification.json``` to reflect this in all foreign key references to ```calendar```.
