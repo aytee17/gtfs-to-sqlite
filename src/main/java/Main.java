@@ -1,6 +1,7 @@
 import org.apache.commons.cli.*;
 
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,8 +18,7 @@ public class Main {
     public static final String URL_OPTION = "u";
     public static final String DATABASE_OPTION = "d";
     public static final String CMD_NAME = "gtsql";
-    public static final String FOOTER = "\nThis tool is used to generate an SQLite database from a GTFS feed. " +
-            "\nPlease report issues at https://github.com/aytee17/gtfs-to-sqlite";
+    public static final String FOOTER = "\nPlease report issues at https://github.com/aytee17/gtfs-to-sqlite";
 
     public static void main(String[] args) {
         try {
@@ -84,10 +84,20 @@ public class Main {
                 if (line.hasOption(URL_OPTION)) {
                     String gtfsURL = line.getOptionValue(URL_OPTION);
                     print("Downloading GTFS feed from: " + gtfsURL);
+                    String zipPath = gtfsPath   + System.getProperty("file.separator") + "GTFS.zip";
                     gtfsFile = IO.getFileFromURL(
-                            gtfsPath   + System.getProperty("file.separator") + "GTFS.zip",
+                            zipPath,
                             gtfsURL,
                             true);
+
+                    // Check if the download is a zip file
+                    RandomAccessFile raf = new RandomAccessFile(zipPath, "r");
+                    long magicNumber = raf.readInt();
+                    raf.close();
+                    if (magicNumber != 0x504B0304) {
+                        throw new Exception("\nDownload is not a zip file.");
+                    }
+
                     print("\nFeed downloaded.");
                 } else {
                     gtfsFile = new File(gtfsPath);
@@ -101,7 +111,7 @@ public class Main {
                 print(exception.getMessage() + "\n");
                 new HelpFormatter().printHelp(CMD_NAME, "", options, FOOTER, true);
             }
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             print(e.getMessage());
             print(FOOTER);

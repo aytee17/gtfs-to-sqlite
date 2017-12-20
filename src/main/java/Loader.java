@@ -1,3 +1,4 @@
+import javafx.application.Application;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,6 +75,7 @@ public class Loader {
         } else {
             try {
                 ZipFile zipFile = new ZipFile(gtfsPath);
+
 
                 File gtfsFolder = new File(gtfsPath.getParent() + System.getProperty("file.separator") + "GTFS");
                 gtfsFolder.mkdir();

@@ -23,12 +23,13 @@ def main():
     jobs = []
     for feed in feeds:
         if 't' in feed and 'u' in feed and 'd' in feed['u']:
-            job = {'title': feed['t'],'url': feed['u']['d']}
+            job = {'title': feed['t'].encode('utf8'),'url': feed['u']['d']}
             jobs.append(job)
 
     for job in jobs:
-        title = "'" + job['title'] + "'".encode('utf8')
-        url = job['url'].encode('utf8')
+        title = "'" + job['title'].decode('utf-8') + "'"
+        title = title.encode('utf-8')
+        url = job['url'].encode('utf-8')
         print(title)
         print(url)
         os.system('mkdir ' + title)
