@@ -1,13 +1,6 @@
 # gtfs-to-sqlite
 A tool for generating an [SQLite](https://www.sqlite.org/about.html) database from a [GTFS](http://gtfs.org/) feed. 
 
-## Features
-* **Fast**:
-Creates ~100,000 rows/second on an Apple SSD 0128F
-
-* **Agnostic**:
-Information will not be added, modified or removed when generating the database.
-
 ## Requirements
 [Java Runtime Environment 8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) or higher.
 
